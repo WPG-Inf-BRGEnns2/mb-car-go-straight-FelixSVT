@@ -66,6 +66,7 @@ radio.onReceivedString(function (receivedString) {
 })
 input.onButtonPressed(Button.B, function () {
     schneller()
+    
 })
 function langsamer () {
     if (vr < 383 || vl < 383) {
@@ -79,8 +80,21 @@ function schreibeGeschwindigkeit () {
     pins.analogWritePin(AnalogPin.P14, vr)
     pins.analogWritePin(AnalogPin.P13, vl)
 }
+
+function korrigiereRichtung(){
+    if (input.compassHeading() > sollRichtung) {
+        vl += 15
+    
+    } else if (input.compassHeading() < sollRichtung) {
+        vr += 15
+    }
+
+
+}
+
 let vl = 0
 let vr = 0
+let sollRichtung = 180
 stop()
 basic.showLeds(`
     . . . . .
@@ -89,12 +103,14 @@ basic.showLeds(`
     . . . . .
     . . . . .
     `)
-radio.setGroup(1)
+radio.setGroup(45)
 vr = 703
 vl = 703
 basic.forever(function () {
     serial.writeValue("vr", vr)
     serial.writeValue("vl", vl)
     schreibeGeschwindigkeit()
-})
+    korrigiereRichtung()
 
+    
+})
